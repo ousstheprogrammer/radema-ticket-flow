@@ -4,6 +4,7 @@ import { Users, TrendingUp, Clock, CheckCircle } from 'lucide-react';
 import { users } from '@/data/users';
 import UserCard from './UserCard';
 import TicketModal from './TicketModal';
+import StatusSelectionModal from './StatusSelectionModal';
 import { User } from '@/data/users';
 
 interface HomePageProps {
@@ -13,10 +14,16 @@ interface HomePageProps {
 
 const HomePage = ({ onTicketCreated, tickets }: HomePageProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const handleCreateTicket = (user: User) => {
     setSelectedUser(user);
+    setIsStatusModalOpen(true);
+  };
+
+  const handleStatusSelected = (status: 'online' | 'busy' | 'offline') => {
+    setIsStatusModalOpen(false);
     setIsModalOpen(true);
   };
 
@@ -109,6 +116,13 @@ const HomePage = ({ onTicketCreated, tickets }: HomePageProps) => {
           </div>
         </div>
       </div>
+
+      <StatusSelectionModal
+        isOpen={isStatusModalOpen}
+        onClose={() => setIsStatusModalOpen(false)}
+        user={selectedUser}
+        onStatusSelected={handleStatusSelected}
+      />
 
       <TicketModal
         isOpen={isModalOpen}
