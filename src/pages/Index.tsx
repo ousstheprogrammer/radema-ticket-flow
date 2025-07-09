@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import HomePage from '@/components/HomePage';
 import Dashboard from '@/components/Dashboard';
 import TicketsPage from '@/components/TicketsPage';
 import LoginPage from '@/components/LoginPage';
+import SettingsPage from '@/components/SettingsPage';
 import { toast } from 'sonner';
 
 const Index = () => {
@@ -39,7 +39,8 @@ const Index = () => {
     // Simulation d'une authentification simple
     const user = {
       username,
-      loginTime: new Date().toISOString()
+      loginTime: new Date().toISOString(),
+      lastActivity: new Date().toISOString()
     };
     
     localStorage.setItem('radema-user', JSON.stringify(user));
@@ -55,6 +56,7 @@ const Index = () => {
     localStorage.removeItem('radema-user');
     setCurrentUser(null);
     setIsLoggedIn(false);
+    setCurrentPage('home');
     toast.success('Déconnexion réussie!');
   };
 
@@ -102,27 +104,11 @@ const Index = () => {
         );
       case 'settings':
         return (
-          <div className="min-h-screen bg-gradient-to-br from-background via-background to-card/30 pt-20 pb-8">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h1 className="text-3xl font-bold gradient-text mb-8">Paramètres</h1>
-              <div className="glass-card p-6 rounded-xl">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">Utilisateur connecté</p>
-                      <p className="text-sm text-muted-foreground">{currentUser?.username}</p>
-                    </div>
-                    <button
-                      onClick={handleLogout}
-                      className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
-                    >
-                      Se déconnecter
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <SettingsPage 
+            currentUser={currentUser}
+            tickets={tickets}
+            onLogout={handleLogout}
+          />
         );
       default:
         return <HomePage onTicketCreated={handleTicketCreated} tickets={tickets} />;
