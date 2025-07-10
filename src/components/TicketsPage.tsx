@@ -11,7 +11,8 @@ import {
   CheckCircle, 
   Eye,
   Edit,
-  Trash2
+  Trash2,
+  UserCheck
 } from 'lucide-react';
 import {
   Table,
@@ -21,6 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 
 interface TicketsPageProps {
   tickets: any[];
@@ -33,6 +35,8 @@ const TicketsPage = ({ tickets, onUpdateTicket, onDeleteTicket }: TicketsPagePro
   const [statusFilter, setStatusFilter] = useState('all');
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [selectedTicket, setSelectedTicket] = useState<any>(null);
+  const [closingTicket, setClosingTicket] = useState<number | null>(null);
+  const [agentName, setAgentName] = useState('');
 
   // Filtrer les tickets
   const filteredTickets = tickets.filter(ticket => {
@@ -84,6 +88,28 @@ const TicketsPage = ({ tickets, onUpdateTicket, onDeleteTicket }: TicketsPagePro
     if (onUpdateTicket) {
       onUpdateTicket(ticketId, { status: newStatus });
     }
+  };
+
+  const handleCloseIntervention = (ticketId: number) => {
+    setClosingTicket(ticketId);
+    setAgentName('');
+  };
+
+  const confirmCloseIntervention = () => {
+    if (closingTicket && agentName.trim() && onUpdateTicket) {
+      onUpdateTicket(closingTicket, { 
+        status: 'closed',
+        completedBy: agentName.trim(),
+        completedAt: new Date().toISOString()
+      });
+      setClosingTicket(null);
+      setAgentName('');
+    }
+  };
+
+  const cancelCloseIntervention = () => {
+    setClosingTicket(null);
+    setAgentName('');
   };
 
   return (
@@ -175,6 +201,7 @@ const TicketsPage = ({ tickets, onUpdateTicket, onDeleteTicket }: TicketsPagePro
                   <TableHead className="font-semibold">Assigné à</TableHead>
                   <TableHead className="font-semibold">Priorité</TableHead>
                   <TableHead className="font-semibold">Statut</TableHead>
+                  <TableHead className="font-semibold">Réalisé par</TableHead>
                   <TableHead className="font-semibold">Date création</TableHead>
                   <TableHead className="font-semibold">Actions</TableHead>
                 </TableRow>
@@ -214,6 +241,16 @@ const TicketsPage = ({ tickets, onUpdateTicket, onDeleteTicket }: TicketsPagePro
                       </select>
                     </TableCell>
                     <TableCell>
+                      {ticket.completedBy ? (
+                        <div className="flex items-center space-x-2">
+                          <UserCheck size={16} className="text-green-500" />
+                          <span className="text-sm font-medium">{ticket.completedBy}</span>
+                        </div>
+                      ) : (
+                        <span className="text-sm text-muted-foreground">-</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
                       <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                         <Calendar size={14} />
                         <span>{new Date(ticket.createdAt).toLocaleDateString('fr-FR')}</span>
@@ -228,6 +265,17 @@ const TicketsPage = ({ tickets, onUpdateTicket, onDeleteTicket }: TicketsPagePro
                         >
                           <Eye size={16} />
                         </button>
+                        {ticket.status !== 'closed' && (
+                          <Button
+                            onClick={() => handleCloseIntervention(ticket.id)}
+                            size="sm"
+                            variant="outline"
+                            className="text-xs h-7"
+                          >
+                            <CheckCircle size={14} className="mr-1" />
+                            Clôturer
+                          </Button>
+                        )}
                         {onDeleteTicket && (
                           <button
                             onClick={() => onDeleteTicket(ticket.id)}
@@ -245,6 +293,57 @@ const TicketsPage = ({ tickets, onUpdateTicket, onDeleteTicket }: TicketsPagePro
             </Table>
           )}
         </div>
+
+        {/* Modal de clôture d'intervention */}
+        {closingTicket && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={cancelCloseIntervention} />
+            <div className="relative glass-card p-6 rounded-2xl w-full max-w-md mx-4">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-bold gradient-text">Clôturer l'intervention</h2>
+                <button
+                  onClick={cancelCloseIntervention}
+                  className="p-2 hover:bg-accent rounded-lg transition-colors"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Nom de l'agent qui a réalisé l'intervention *
+                  </label>
+                  <input
+                    type="text"
+                    value={agentName}
+                    onChange={(e) => setAgentName(e.target.value)}
+                    placeholder="Entrez le nom de l'agent..."
+                    className="w-full px-3 py-2 bg-input border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  />
+                </div>
+
+                <div className="flex space-x-3 pt-4">
+                  <Button
+                    onClick={confirmCloseIntervention}
+                    disabled={!agentName.trim()}
+                    className="flex-1"
+                  >
+                    <CheckCircle size={16} className="mr-2" />
+                    Confirmer la clôture
+                  </Button>
+                  <Button
+                    onClick={cancelCloseIntervention}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    Annuler
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Modal de détails du ticket */}
         {selectedTicket && (
@@ -301,6 +400,27 @@ const TicketsPage = ({ tickets, onUpdateTicket, onDeleteTicket }: TicketsPagePro
                     </p>
                   </div>
                 </div>
+
+                {selectedTicket.completedBy && (
+                  <div className="border-t border-border pt-4">
+                    <h3 className="font-semibold mb-3 flex items-center text-green-600">
+                      <CheckCircle className="mr-2" size={18} />
+                      Intervention terminée
+                    </h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Réalisé par</label>
+                        <p className="p-3 bg-input rounded-lg">{selectedTicket.completedBy}</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Date de clôture</label>
+                        <p className="p-3 bg-input rounded-lg">
+                          {new Date(selectedTicket.completedAt).toLocaleString('fr-FR')}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {(selectedTicket.claimToService || selectedTicket.claimToDepartment) && (
                   <div className="border-t border-border pt-4">
