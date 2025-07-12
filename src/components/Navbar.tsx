@@ -22,10 +22,10 @@ const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-gradient-to-br from-primary to-blue-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">R</span>
+              <span className="text-white font-bold text-sm">S</span>
             </div>
             <div>
-              <h1 className="font-bold text-lg gradient-text">RADEMA</h1>
+              <h1 className="font-bold text-lg gradient-text">SRM</h1>
               <p className="text-xs text-muted-foreground">Développement Commercial</p>
             </div>
           </div>
