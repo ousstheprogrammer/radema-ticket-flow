@@ -31,7 +31,7 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
             <User className="text-white" size={32} />
           </div>
           <h1 className="text-2xl font-bold gradient-text mb-2">
-            Connexion RADEMA
+            Connexion SRM
           </h1>
           <p className="text-muted-foreground">
             Département de Développement Commercial
@@ -84,7 +84,7 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
 
         <div className="mt-6 text-center text-sm text-muted-foreground">
           <p>Système de Gestion des Interventions</p>
-          <p>RADEMA Marrakech</p>
+          <p>SRM Marrakech</p>
         </div>
       </div>
     </div>
