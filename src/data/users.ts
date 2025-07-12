@@ -12,110 +12,110 @@ export interface User {
 export const users: User[] = [
   {
     id: 1,
-    name: "Ahmed Bennani",
-    role: "Chef de Département",
+    name: "Safya Goumri",
+    role: "Cheffe Département Développement Clientèle",
     department: "Développement Commercial",
-    avatar: "AB",
+    avatar: "SG",
     status: "online",
-    email: "a.bennani@radema.ma"
+    email: "s.goumri@radema.ma"
   },
   {
     id: 2,
-    name: "Fatima El Alaoui",
-    role: "Chef de Service",
-    department: "Développement Commercial",
-    avatar: "FE",
+    name: "Mohammed Aiatallah",
+    role: "Chef Division Administration système et reporting",
+    department: "Administration et Reporting",
+    avatar: "MA",
     status: "online",
-    email: "f.elalaoui@radema.ma"
+    email: "m.aiatallah@radema.ma"
   },
   {
     id: 3,
-    name: "Mohamed Chakib",
-    role: "Responsable Clientèle",
-    department: "Développement Commercial",
-    avatar: "MC",
+    name: "Safaa Errihani",
+    role: "Cheffe Division de Développement et Digitalisation",
+    department: "Développement et Digitalisation",
+    avatar: "SE",
     status: "busy",
-    email: "m.chakib@radema.ma"
+    email: "s.errihani@radema.ma"
   },
   {
     id: 4,
-    name: "Aicha Benali",
-    role: "Agent Commercial",
-    department: "Développement Commercial",
-    avatar: "AB",
+    name: "Hamza Dah",
+    role: "Chef Service Digitalisation du processus Commercial",
+    department: "Digitalisation",
+    avatar: "HD",
     status: "online",
-    email: "a.benali@radema.ma"
+    email: "h.dah@radema.ma"
   },
   {
     id: 5,
-    name: "Youssef Mansouri",
-    role: "Chargé de Développement",
-    department: "Développement Commercial",
-    avatar: "YM",
+    name: "Mohamed Ait Mou",
+    role: "Chef Service Administration système et assistance aux utilisateurs",
+    department: "Administration Système",
+    avatar: "MM",
     status: "offline",
-    email: "y.mansouri@radema.ma"
+    email: "m.aitmou@radema.ma"
   },
   {
     id: 6,
-    name: "Khadija Rami",
-    role: "Agent Commercial",
-    department: "Développement Commercial",
-    avatar: "KR",
+    name: "Adil Hazeb",
+    role: "Chef Service Reporting",
+    department: "Reporting",
+    avatar: "AH",
     status: "online",
-    email: "k.rami@radema.ma"
+    email: "a.hazeb@radema.ma"
   },
   {
     id: 7,
-    name: "Omar Zahiri",
-    role: "Conseiller Commercial",
-    department: "Développement Commercial",
-    avatar: "OZ",
+    name: "Laila Ouanim",
+    role: "Cheffe Division CRC et gestion des réclamations",
+    department: "CRC et Réclamations",
+    avatar: "LO",
     status: "busy",
-    email: "o.zahiri@radema.ma"
+    email: "l.ouanim@radema.ma"
   },
   {
     id: 8,
-    name: "Nadia Berrada",
-    role: "Agent Commercial",
+    name: "Imane Lahdiah",
+    role: "Agent",
     department: "Développement Commercial",
-    avatar: "NB",
+    avatar: "IL",
     status: "online",
-    email: "n.berrada@radema.ma"
+    email: "i.lahdiah@radema.ma"
   },
   {
     id: 9,
-    name: "Rachid Amrani",
-    role: "Superviseur Commercial",
-    department: "Développement Commercial",
-    avatar: "RA",
+    name: "Salwa Bouderba",
+    role: "Chef Service Animation des agences",
+    department: "Animation des Agences",
+    avatar: "SB",
     status: "online",
-    email: "r.amrani@radema.ma"
+    email: "s.bouderba@radema.ma"
   },
   {
     id: 10,
-    name: "Salma Ouali",
-    role: "Agent Commercial",
+    name: "Mohamed Dakir",
+    role: "Agent de Maîtrise",
     department: "Développement Commercial",
-    avatar: "SO",
+    avatar: "MD",
     status: "offline",
-    email: "s.ouali@radema.ma"
+    email: "m.dakir@radema.ma"
   },
   {
     id: 11,
-    name: "Hassan Tazi",
-    role: "Chargé de Clientèle",
+    name: "Fatima Ezzahra Chakhais",
+    role: "Agent de Maîtrise",
     department: "Développement Commercial",
-    avatar: "HT",
+    avatar: "FC",
     status: "online",
-    email: "h.tazi@radema.ma"
+    email: "f.chakhais@radema.ma"
   },
   {
     id: 12,
-    name: "Zineb Fassi",
-    role: "Agent Commercial",
+    name: "Zakaria Naouassih",
+    role: "Agent d'Exécution",
     department: "Développement Commercial",
-    avatar: "ZF",
+    avatar: "ZN",
     status: "busy",
-    email: "z.fassi@radema.ma"
+    email: "z.naouassih@radema.ma"
   }
 ];
