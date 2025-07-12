@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Users, TrendingUp, Clock, CheckCircle } from 'lucide-react';
 import { users } from '@/data/users';
@@ -73,7 +72,7 @@ const HomePage = ({ onTicketCreated, tickets }: HomePageProps) => {
             Système de Gestion des Interventions
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            RADEMA Marrakech - Département de Développement Commercial
+            SRM Marrakech - Département de Développement Commercial
           </p>
         </div>
 

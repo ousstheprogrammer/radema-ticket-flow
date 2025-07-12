@@ -15,7 +15,7 @@ const Index = () => {
 
   // Vérifier si l'utilisateur est connecté au démarrage
   useEffect(() => {
-    const savedUser = localStorage.getItem('radema-user');
+    const savedUser = localStorage.getItem('srm-user');
     if (savedUser) {
       setCurrentUser(JSON.parse(savedUser));
       setIsLoggedIn(true);
@@ -24,7 +24,7 @@ const Index = () => {
 
   // Charger les tickets depuis le localStorage au démarrage
   useEffect(() => {
-    const savedTickets = localStorage.getItem('radema-tickets');
+    const savedTickets = localStorage.getItem('srm-tickets');
     if (savedTickets) {
       setTickets(JSON.parse(savedTickets));
     }
@@ -32,7 +32,7 @@ const Index = () => {
 
   // Sauvegarder les tickets dans le localStorage
   useEffect(() => {
-    localStorage.setItem('radema-tickets', JSON.stringify(tickets));
+    localStorage.setItem('srm-tickets', JSON.stringify(tickets));
   }, [tickets]);
 
   const handleLogin = (username: string, password: string) => {
@@ -43,7 +43,7 @@ const Index = () => {
       lastActivity: new Date().toISOString()
     };
     
-    localStorage.setItem('radema-user', JSON.stringify(user));
+    localStorage.setItem('srm-user', JSON.stringify(user));
     setCurrentUser(user);
     setIsLoggedIn(true);
     
@@ -53,7 +53,7 @@ const Index = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('radema-user');
+    localStorage.removeItem('srm-user');
     setCurrentUser(null);
     setIsLoggedIn(false);
     setCurrentPage('home');

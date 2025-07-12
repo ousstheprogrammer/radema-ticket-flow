@@ -17,7 +17,7 @@ export const users: User[] = [
     department: "Développement Commercial",
     avatar: "SG",
     status: "online",
-    email: "s.goumri@radema.ma"
+    email: "s.goumri@srm.ma"
   },
   {
     id: 2,
@@ -26,7 +26,7 @@ export const users: User[] = [
     department: "Administration et Reporting",
     avatar: "MA",
     status: "online",
-    email: "m.aiatallah@radema.ma"
+    email: "m.aiatallah@srm.ma"
   },
   {
     id: 3,
@@ -35,7 +35,7 @@ export const users: User[] = [
     department: "Développement et Digitalisation",
     avatar: "SE",
     status: "busy",
-    email: "s.errihani@radema.ma"
+    email: "s.errihani@srm.ma"
   },
   {
     id: 4,
@@ -44,7 +44,7 @@ export const users: User[] = [
     department: "Digitalisation",
     avatar: "HD",
     status: "online",
-    email: "h.dah@radema.ma"
+    email: "h.dah@srm.ma"
   },
   {
     id: 5,
@@ -53,7 +53,7 @@ export const users: User[] = [
     department: "Administration Système",
     avatar: "MM",
     status: "offline",
-    email: "m.aitmou@radema.ma"
+    email: "m.aitmou@srm.ma"
   },
   {
     id: 6,
@@ -62,7 +62,7 @@ export const users: User[] = [
     department: "Reporting",
     avatar: "AH",
     status: "online",
-    email: "a.hazeb@radema.ma"
+    email: "a.hazeb@srm.ma"
   },
   {
     id: 7,
@@ -71,7 +71,7 @@ export const users: User[] = [
     department: "CRC et Réclamations",
     avatar: "LO",
     status: "busy",
-    email: "l.ouanim@radema.ma"
+    email: "l.ouanim@srm.ma"
   },
   {
     id: 8,
@@ -80,7 +80,7 @@ export const users: User[] = [
     department: "Développement Commercial",
     avatar: "IL",
     status: "online",
-    email: "i.lahdiah@radema.ma"
+    email: "i.lahdiah@srm.ma"
   },
   {
     id: 9,
@@ -89,7 +89,7 @@ export const users: User[] = [
     department: "Animation des Agences",
     avatar: "SB",
     status: "online",
-    email: "s.bouderba@radema.ma"
+    email: "s.bouderba@srm.ma"
   },
   {
     id: 10,
@@ -98,7 +98,7 @@ export const users: User[] = [
     department: "Développement Commercial",
     avatar: "MD",
     status: "offline",
-    email: "m.dakir@radema.ma"
+    email: "m.dakir@srm.ma"
   },
   {
     id: 11,
@@ -107,7 +107,7 @@ export const users: User[] = [
     department: "Développement Commercial",
     avatar: "FC",
     status: "online",
-    email: "f.chakhais@radema.ma"
+    email: "f.chakhais@srm.ma"
   },
   {
     id: 12,
@@ -116,6 +116,6 @@ export const users: User[] = [
     department: "Développement Commercial",
     avatar: "ZN",
     status: "busy",
-    email: "z.naouassih@radema.ma"
+    email: "z.naouassih@srm.ma"
   }
 ];
