@@ -97,8 +97,15 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-secondary/20 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">SRM</CardTitle>
-          <CardDescription>Système de Ressources de Maintenance</CardDescription>
+          <div className="flex flex-col items-center space-y-3">
+            <img 
+              src="/lovable-uploads/afe13b00-8adc-4688-80c1-16bda30ba6d6.png" 
+              alt="SRM Logo" 
+              className="h-20 w-auto"
+            />
+            <CardTitle className="text-2xl font-bold">SRM</CardTitle>
+            <CardDescription>Système de Ressources de Maintenance</CardDescription>
+          </div>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="login" className="w-full">
