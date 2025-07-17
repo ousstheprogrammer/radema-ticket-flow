@@ -13,6 +13,8 @@ interface AuthPageProps {
 
 const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [showResetPassword, setShowResetPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [signupData, setSignupData] = useState({ 
     email: '', 
@@ -69,7 +71,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
 
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: signupData.email,
         password: signupData.password,
         options: {
@@ -84,10 +86,47 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
       if (error) {
         toast.error(error.message);
       } else {
-        toast.success('Compte créé avec succès! Vérifiez votre email.');
+        if (data.user && !data.user.email_confirmed_at) {
+          toast.success('Compte créé! Vérifiez votre email pour confirmer votre compte.', {
+            description: 'Un lien de vérification a été envoyé à votre adresse email.',
+            duration: 6000,
+          });
+        } else {
+          toast.success('Compte créé avec succès!');
+        }
       }
     } catch (error) {
       toast.error('Erreur lors de la création du compte');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetEmail) {
+      toast.error('Veuillez entrer votre adresse email');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/`,
+      });
+
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success('Email de réinitialisation envoyé!', {
+          description: 'Vérifiez votre boîte mail pour réinitialiser votre mot de passe.',
+          duration: 6000,
+        });
+        setShowResetPassword(false);
+        setResetEmail('');
+      }
+    } catch (error) {
+      toast.error('Erreur lors de l\'envoi de l\'email');
     } finally {
       setIsLoading(false);
     }
@@ -115,31 +154,68 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
             </TabsList>
             
             <TabsContent value="login">
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={loginData.email}
-                    onChange={(e) => setLoginData(prev => ({ ...prev, email: e.target.value }))}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Mot de passe</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={loginData.password}
-                    onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? 'Connexion...' : 'Se connecter'}
-                </Button>
-              </form>
+              {!showResetPassword ? (
+                <form onSubmit={handleLogin} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={loginData.email}
+                      onChange={(e) => setLoginData(prev => ({ ...prev, email: e.target.value }))}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Mot de passe</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      value={loginData.password}
+                      onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
+                      required
+                    />
+                  </div>
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? 'Connexion...' : 'Se connecter'}
+                  </Button>
+                  <div className="text-center">
+                    <button
+                      type="button"
+                      onClick={() => setShowResetPassword(true)}
+                      className="text-sm text-primary hover:underline"
+                    >
+                      Mot de passe oublié ?
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <form onSubmit={handleResetPassword} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="reset-email">Email pour réinitialisation</Label>
+                    <Input
+                      id="reset-email"
+                      type="email"
+                      value={resetEmail}
+                      onChange={(e) => setResetEmail(e.target.value)}
+                      required
+                      placeholder="Entrez votre adresse email"
+                    />
+                  </div>
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? 'Envoi...' : 'Envoyer le lien de réinitialisation'}
+                  </Button>
+                  <div className="text-center">
+                    <button
+                      type="button"
+                      onClick={() => setShowResetPassword(false)}
+                      className="text-sm text-muted-foreground hover:underline"
+                    >
+                      Retour à la connexion
+                    </button>
+                  </div>
+                </form>
+              )}
             </TabsContent>
             
             <TabsContent value="signup">

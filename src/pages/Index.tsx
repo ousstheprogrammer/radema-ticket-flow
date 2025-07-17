@@ -22,6 +22,12 @@ const Index = () => {
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+        
+        if (event === 'SIGNED_IN') {
+          toast.success('Connexion réussie!');
+        } else if (event === 'USER_UPDATED') {
+          toast.success('Email vérifié avec succès!');
+        }
       }
     );
 
