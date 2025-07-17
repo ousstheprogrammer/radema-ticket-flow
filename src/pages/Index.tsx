@@ -3,23 +3,35 @@ import Navbar from '@/components/Navbar';
 import HomePage from '@/components/HomePage';
 import Dashboard from '@/components/Dashboard';
 import TicketsPage from '@/components/TicketsPage';
-import LoginPage from '@/components/LoginPage';
+import AuthPage from '@/components/AuthPage';
 import SettingsPage from '@/components/SettingsPage';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import type { User, Session } from '@supabase/supabase-js';
 
 const Index = () => {
   const [currentPage, setCurrentPage] = useState('home');
   const [tickets, setTickets] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
 
-  // Vérifier si l'utilisateur est connecté au démarrage
+  // Setup Supabase auth listener
   useEffect(() => {
-    const savedUser = localStorage.getItem('srm-user');
-    if (savedUser) {
-      setCurrentUser(JSON.parse(savedUser));
-      setIsLoggedIn(true);
-    }
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+      }
+    );
+
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   // Charger les tickets depuis le localStorage au démarrage
@@ -35,29 +47,18 @@ const Index = () => {
     localStorage.setItem('srm-tickets', JSON.stringify(tickets));
   }, [tickets]);
 
-  const handleLogin = (username: string, password: string) => {
-    // Simulation d'une authentification simple
-    const user = {
-      username,
-      loginTime: new Date().toISOString(),
-      lastActivity: new Date().toISOString()
-    };
-    
-    localStorage.setItem('srm-user', JSON.stringify(user));
-    setCurrentUser(user);
-    setIsLoggedIn(true);
-    
-    toast.success('Connexion réussie!', {
-      description: `Bienvenue ${username}`,
-    });
+  const handleAuthSuccess = () => {
+    // Auth success is handled by onAuthStateChange
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('srm-user');
-    setCurrentUser(null);
-    setIsLoggedIn(false);
-    setCurrentPage('home');
-    toast.success('Déconnexion réussie!');
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error('Erreur lors de la déconnexion');
+    } else {
+      setCurrentPage('home');
+      toast.success('Déconnexion réussie!');
+    }
   };
 
   const handleTicketCreated = (ticket) => {
@@ -79,8 +80,8 @@ const Index = () => {
     toast.success('Ticket supprimé avec succès!');
   };
 
-  if (!isLoggedIn) {
-    return <LoginPage onLogin={handleLogin} />;
+  if (!user) {
+    return <AuthPage onAuthSuccess={handleAuthSuccess} />;
   }
 
   const renderCurrentPage = () => {
@@ -105,7 +106,7 @@ const Index = () => {
       case 'settings':
         return (
           <SettingsPage 
-            currentUser={currentUser}
+            currentUser={user}
             tickets={tickets}
             onLogout={handleLogout}
           />
