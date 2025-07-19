@@ -1,13 +1,42 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { TrendingUp, Users, Clock, CheckCircle } from 'lucide-react';
+import { TrendingUp, Users, Clock, CheckCircle, User, Briefcase, Mail } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Card, CardContent } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 
 interface DashboardProps {
   tickets: any[];
 }
 
 const Dashboard = ({ tickets }: DashboardProps) => {
+  const [userProfile, setUserProfile] = useState<any>(null);
+
+  // Fetch user profile data
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        
+        setUserProfile({
+          ...profile,
+          email: user.email,
+          full_name: profile?.full_name || user.user_metadata?.full_name || 'Utilisateur',
+          profession: profile?.profession || 'Non spécifié'
+        });
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
   // Générer les données pour le graphique hebdomadaire
   const getWeeklyData = () => {
     const weeks = [];
@@ -87,7 +116,62 @@ const Dashboard = ({ tickets }: DashboardProps) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-card/30 pt-20 pb-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 gap-6">
+        {/* Sidebar Profile */}
+        <div className="w-80 flex-shrink-0">
+          <Card className="glass-card sticky top-24">
+            <CardContent className="p-6">
+              <div className="flex flex-col items-center text-center space-y-4">
+                <Avatar className="h-20 w-20 ring-2 ring-primary/20">
+                  <AvatarFallback className="bg-primary/10 text-primary text-lg font-semibold">
+                    {userProfile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+                  </AvatarFallback>
+                </Avatar>
+                
+                <div className="space-y-1">
+                  <h2 className="text-xl font-semibold text-foreground">
+                    {userProfile?.full_name || 'Chargement...'}
+                  </h2>
+                  <p className="text-sm text-muted-foreground flex items-center justify-center gap-1">
+                    <Briefcase className="h-3 w-3" />
+                    {userProfile?.profession || 'Chargement...'}
+                  </p>
+                </div>
+
+                <Separator />
+
+                <div className="space-y-3 w-full">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Mail className="h-4 w-4" />
+                    <span className="truncate">{userProfile?.email || 'Chargement...'}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <User className="h-4 w-4" />
+                    <span>ID: {userProfile?.id?.slice(0, 8) || '...'}</span>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="grid grid-cols-2 gap-3 w-full">
+                  <div className="text-center p-3 bg-primary/5 rounded-lg">
+                    <p className="text-lg font-semibold text-foreground">{tickets.length}</p>
+                    <p className="text-xs text-muted-foreground">Tickets Total</p>
+                  </div>
+                  <div className="text-center p-3 bg-green-500/10 rounded-lg">
+                    <p className="text-lg font-semibold text-foreground">
+                      {tickets.filter(t => t.status === 'closed').length}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Terminés</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 min-w-0">
         <div className="mb-8">
           <h1 className="text-3xl font-bold gradient-text mb-2">Dashboard</h1>
           <p className="text-muted-foreground">Vue d'ensemble des interventions RADEMA</p>
@@ -231,6 +315,7 @@ const Dashboard = ({ tickets }: DashboardProps) => {
             </div>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

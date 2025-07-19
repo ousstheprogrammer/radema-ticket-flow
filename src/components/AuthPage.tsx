@@ -25,7 +25,8 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
     password: '', 
     confirmPassword: '', 
     username: '', 
-    fullName: '' 
+    fullName: '',
+    profession: ''
   });
 
   // Password strength calculation
@@ -150,6 +151,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
           data: {
             username: signupData.username,
             full_name: signupData.fullName,
+            profession: signupData.profession,
           }
         }
       });
@@ -317,6 +319,16 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
                     type="text"
                     value={signupData.fullName}
                     onChange={(e) => setSignupData(prev => ({ ...prev, fullName: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="profession">Profession</Label>
+                  <Input
+                    id="profession"
+                    type="text"
+                    placeholder="Ex: Technicien, Ingénieur, Maintenance..."
+                    value={signupData.profession}
+                    onChange={(e) => setSignupData(prev => ({ ...prev, profession: e.target.value }))}
                   />
                 </div>
                 <div className="space-y-2">
