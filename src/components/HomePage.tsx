@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Users, TrendingUp, Clock, CheckCircle } from 'lucide-react';
 import { users } from '@/data/users';
 import UserCard from './UserCard';
-import TicketModal from './TicketModal';
+import EnhancedTicketModal from './EnhancedTicketModal';
 import StatusSelectionModal from './StatusSelectionModal';
 import { User } from '@/data/users';
 
@@ -104,7 +104,7 @@ const HomePage = ({ onTicketCreated, tickets }: HomePageProps) => {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="responsive-grid">
             {users.map((user) => (
               <UserCard
                 key={user.id}
@@ -123,7 +123,7 @@ const HomePage = ({ onTicketCreated, tickets }: HomePageProps) => {
         onStatusSelected={handleStatusSelected}
       />
 
-      <TicketModal
+      <EnhancedTicketModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         user={selectedUser}

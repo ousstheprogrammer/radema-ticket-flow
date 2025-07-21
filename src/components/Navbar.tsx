@@ -2,6 +2,7 @@
 import React from 'react';
 import { Home, Ticket, BarChart3, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface NavbarProps {
   currentPage: string;
@@ -30,25 +31,30 @@ const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
             </div>
           </div>
           
-          <div className="flex space-x-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => onNavigate(item.id)}
-                  className={cn(
-                    "flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200",
-                    currentPage === item.id
-                      ? "bg-primary text-primary-foreground shadow-lg"
-                      : "hover:bg-accent text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <Icon size={18} />
-                  <span className="hidden sm:block font-medium">{item.label}</span>
-                </button>
-              );
-            })}
+          <div className="flex items-center space-x-4">
+            <div className="flex space-x-1">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => onNavigate(item.id)}
+                    className={cn(
+                      "flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200",
+                      currentPage === item.id
+                        ? "bg-primary text-primary-foreground shadow-lg"
+                        : "hover:bg-accent text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <Icon size={18} />
+                    <span className="hidden sm:block font-medium">{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+            
+            {/* Theme Toggle */}
+            <ThemeToggle />
           </div>
         </div>
       </div>

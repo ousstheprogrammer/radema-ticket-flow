@@ -123,7 +123,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="mobile-optimized bg-background">
       <Navbar currentPage={currentPage} onNavigate={setCurrentPage} />
       {renderCurrentPage()}
     </div>

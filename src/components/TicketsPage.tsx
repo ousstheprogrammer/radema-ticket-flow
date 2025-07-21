@@ -113,7 +113,7 @@ const TicketsPage = ({ tickets, onUpdateTicket, onDeleteTicket }: TicketsPagePro
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-card/30 pt-20 pb-8">
+    <div className="mobile-optimized bg-gradient-to-br from-background via-background to-card/30 pt-20 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -127,14 +127,14 @@ const TicketsPage = ({ tickets, onUpdateTicket, onDeleteTicket }: TicketsPagePro
         </div>
 
         {/* Filtres et recherche */}
-        <div className="glass-card p-6 rounded-xl mb-6">
+        <div className="glass-card mobile-card mb-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {/* Recherche */}
+            {/* Recherche intelligente */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
               <input
                 type="text"
-                placeholder="Rechercher un ticket..."
+                placeholder="Recherche intelligente de tickets..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-input border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
