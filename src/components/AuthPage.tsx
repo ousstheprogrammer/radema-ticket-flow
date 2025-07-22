@@ -207,7 +207,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
 
   // Biometric authentication functions
   const handleBiometricLogin = async (useFingerprint = true) => {
-    if (!navigator.credentials) {
+    if (!window.PublicKeyCredential) {
       toast.error('Authentification biométrique non supportée par ce navigateur');
       return;
     }
@@ -218,51 +218,122 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
       const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
       if (!available) {
         toast.error('Authentification biométrique non disponible sur cet appareil');
+        setIsLoading(false);
         return;
       }
+
+      // Generate a proper challenge
+      const challenge = crypto.getRandomValues(new Uint8Array(32));
+      const userId = crypto.getRandomValues(new Uint8Array(16));
 
       // Create credential request
       const credential = await navigator.credentials.create({
         publicKey: {
-          challenge: new Uint8Array(32),
+          challenge: challenge,
           rp: {
             name: "SRM Ticketing System",
-            id: window.location.hostname,
+            id: window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname,
           },
           user: {
-            id: new Uint8Array(16),
-            name: "user@example.com",
+            id: userId,
+            name: loginData.email || "user@example.com",
             displayName: "Utilisateur SRM",
           },
-          pubKeyCredParams: [{alg: -7, type: "public-key"}],
+          pubKeyCredParams: [
+            { alg: -7, type: "public-key" },  // ES256
+            { alg: -257, type: "public-key" } // RS256
+          ],
           authenticatorSelection: {
             authenticatorAttachment: "platform",
-            userVerification: "required"
-          }
+            userVerification: "required",
+            requireResidentKey: false
+          },
+          timeout: 60000,
+          attestation: "direct"
         }
       });
 
       if (credential) {
-        toast.success('Authentification biométrique réussie!');
-        // Here you would typically verify the credential with your backend
-        // For now, we'll simulate a successful login
+        toast.success('Authentification biométrique configurée avec succès!');
+        
+        // Store the credential for future use (in a real app, send to backend)
+        localStorage.setItem('biometric_credential', JSON.stringify({
+          id: credential.id,
+          type: credential.type,
+          email: loginData.email
+        }));
+        
+        // Simulate successful login
         onAuthSuccess();
       }
     } catch (error: any) {
+      console.error('Biometric authentication error:', error);
+      
       if (error.name === 'NotAllowedError') {
-        toast.error('Authentification biométrique annulée');
+        toast.error('Authentification biométrique refusée ou annulée');
       } else if (error.name === 'InvalidStateError') {
-        toast.error('Une authentification biométrique est déjà configurée');
+        toast.error('Authentification biométrique déjà configurée pour cet utilisateur');
+      } else if (error.name === 'NotSupportedError') {
+        toast.error('Type d\'authentification biométrique non supporté');
+      } else if (error.name === 'SecurityError') {
+        toast.error('Erreur de sécurité - vérifiez que vous êtes sur HTTPS');
       } else {
-        toast.error('Erreur lors de l\'authentification biométrique');
+        toast.error(`Erreur d'authentification biométrique: ${error.message}`);
       }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleFingerprintLogin = () => handleBiometricLogin(true);
-  const handleFaceRecognitionLogin = () => handleBiometricLogin(false);
+  const handleBiometricVerification = async () => {
+    if (!window.PublicKeyCredential) {
+      toast.error('Authentification biométrique non supportée');
+      return;
+    }
+
+    const storedCredential = localStorage.getItem('biometric_credential');
+    if (!storedCredential) {
+      toast.error('Aucune authentification biométrique configurée. Veuillez d\'abord vous inscrire.');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const credentialData = JSON.parse(storedCredential);
+      const challenge = crypto.getRandomValues(new Uint8Array(32));
+
+      const assertion = await navigator.credentials.get({
+        publicKey: {
+          challenge: challenge,
+          rpId: window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname,
+          allowCredentials: [{
+            id: new TextEncoder().encode(credentialData.id),
+            type: "public-key"
+          }],
+          userVerification: "required",
+          timeout: 60000
+        }
+      });
+
+      if (assertion) {
+        toast.success('Connexion biométrique réussie!');
+        onAuthSuccess();
+      }
+    } catch (error: any) {
+      console.error('Biometric verification error:', error);
+      
+      if (error.name === 'NotAllowedError') {
+        toast.error('Authentification biométrique refusée');
+      } else {
+        toast.error(`Erreur de vérification: ${error.message}`);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleFingerprintLogin = () => handleBiometricVerification();
+  const handleFaceRecognitionLogin = () => handleBiometricVerification();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-secondary/20 p-4">
@@ -330,7 +401,8 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
                       variant="outline"
                       onClick={handleFingerprintLogin}
                       disabled={isLoading}
-                      className="flex items-center justify-center space-x-2 h-12"
+                      className="flex items-center justify-center space-x-2 h-12 transition-all hover:bg-primary/10"
+                      title="Connexion par empreinte digitale"
                     >
                       <Fingerprint size={20} />
                       <span className="hidden sm:inline">Empreinte</span>
@@ -340,11 +412,16 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
                       variant="outline"
                       onClick={handleFaceRecognitionLogin}
                       disabled={isLoading}
-                      className="flex items-center justify-center space-x-2 h-12"
+                      className="flex items-center justify-center space-x-2 h-12 transition-all hover:bg-primary/10"
+                      title="Connexion par reconnaissance faciale"
                     >
                       <ScanFace size={20} />
                       <span className="hidden sm:inline">Visage</span>
                     </Button>
+                  </div>
+                  
+                  <div className="text-center text-xs text-muted-foreground">
+                    <p>L'authentification biométrique nécessite HTTPS et un appareil compatible</p>
                   </div>
                   
                   <div className="text-center">
@@ -526,6 +603,20 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? 'Création...' : 'Créer un compte'}
                 </Button>
+                
+                {/* Option to setup biometric after signup */}
+                <div className="text-center pt-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => handleBiometricLogin()}
+                    disabled={isLoading}
+                    className="w-full flex items-center justify-center space-x-2"
+                  >
+                    <Fingerprint size={16} />
+                    <span>Configurer l'authentification biométrique</span>
+                  </Button>
+                </div>
               </form>
             </TabsContent>
           </Tabs>
