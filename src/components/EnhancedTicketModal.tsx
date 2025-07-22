@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, User, FileText, MessageSquare, AlertTriangle, Lightbulb, Send } from 'lucide-react';
+import { X, User, FileText, MessageSquare, AlertTriangle, Lightbulb, Send, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { User as UserType } from '@/data/users';
 import { SmartSearch } from '@/components/SmartSearch';
@@ -21,6 +21,7 @@ const EnhancedTicketModal = ({ isOpen, onClose, user, onSubmit }: TicketModalPro
   const [showRecommendation, setShowRecommendation] = useState(false);
   const [claimToService, setClaimToService] = useState('');
   const [claimToDepartment, setClaimToDepartment] = useState('');
+  const [problemPhase, setProblemPhase] = useState('');
 
   // Smart prioritization effect
   useEffect(() => {
@@ -53,6 +54,7 @@ const EnhancedTicketModal = ({ isOpen, onClose, user, onSubmit }: TicketModalPro
         smartScore: smartRecommendation?.score || 0,
         claimToService: claimToService.trim(),
         claimToDepartment: claimToDepartment.trim(),
+        problemPhase: problemPhase,
         createdBy: 'Utilisateur actuel'
       };
       
@@ -66,6 +68,7 @@ const EnhancedTicketModal = ({ isOpen, onClose, user, onSubmit }: TicketModalPro
       setShowRecommendation(false);
       setClaimToService('');
       setClaimToDepartment('');
+      setProblemPhase('');
       onClose();
     }
   };
@@ -164,6 +167,38 @@ const EnhancedTicketModal = ({ isOpen, onClose, user, onSubmit }: TicketModalPro
               </div>
             </div>
           )}
+
+          {/* Problem Phase Selection */}
+          <div>
+            <label className="block text-sm font-medium mb-2 flex items-center">
+              <Settings className="mr-2" size={16} />
+              Phase du problème *
+            </label>
+            <select
+              value={problemPhase}
+              onChange={(e) => setProblemPhase(e.target.value)}
+              className="w-full px-3 py-2 bg-input border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              required
+            >
+              <option value="">Sélectionnez une phase...</option>
+              <option value="materiel">Problèmes matériels</option>
+              <option value="logiciel">Problèmes logiciels</option>
+              <option value="reseau">Problèmes réseau</option>
+              <option value="compte">Comptes utilisateur / Authentification</option>
+              <option value="email">Problèmes de messagerie</option>
+              <option value="imprimante">Problèmes d'imprimante</option>
+              <option value="acces">Accès / Permissions</option>
+              <option value="performance">Performance système</option>
+              <option value="application">Erreurs d'application</option>
+              <option value="securite">Incidents de sécurité</option>
+              <option value="paiement">Problèmes de paiement</option>
+              <option value="file-attente">File d'attente / Processus</option>
+              <option value="base-donnees">Base de données</option>
+              <option value="sauvegarde">Sauvegarde / Restauration</option>
+              <option value="telephonie">Téléphonie / Communication</option>
+              <option value="autre">Autre</option>
+            </select>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
